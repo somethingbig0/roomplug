@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --roomplug-blue: #38bdf8;
+  --roomplug-blue-soft: #eaf8ff;
+  --roomplug-blue-light: #f5fbff;
+  --roomplug-blue-border: #d8f1ff;
+  --roomplug-text: #256080;
+  --roomplug-text-soft: #6b9bb3;
+}
+
+* {
+  font-family: 'Century Gothic', 'Avenir Next', 'Poppins', 'Segoe UI', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(180deg, #f5fbff 0%, #ffffff 45%, #f8fcff 100%);
+  color: var(--roomplug-text);
+  overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select,
+a,
+img {
+  transition: all 0.25s ease;
+}
+
+input,
+textarea,
+select {
+  border-radius: 18px;
+}
+
+::selection {
+  background: #bae6fd;
+  color: #075985;
+}
+
+/* RoomPlug live scroll animation — movement/scale/blur only */
+
+.room-card-scroll,
+.scroll-float {
+  transform: translate3d(0, 48px, 0) scale(0.96);
+  filter: blur(7px);
+  transition:
+    transform 0.48s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.42s ease,
+    box-shadow 0.35s ease;
+  will-change: transform, filter;
+}
+
+.room-card-scroll.room-card-show,
+.scroll-float.scroll-float-show {
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+.room-card-scroll:hover,
+.scroll-float:hover {
+  transform: translate3d(0, -6px, 0) scale(1.012);
+}
+
+/* Mobile scroll animation — faster, responsive, no hover jump */
+
+@media (max-width: 640px) {
+  .room-card-scroll,
+  .scroll-float {
+    transform: translate3d(0, 34px, 0) scale(0.975);
+    filter: blur(4px);
+    transition:
+      transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.34s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .room-card-scroll.room-card-show,
+  .scroll-float.scroll-float-show {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+
+  .room-card-scroll:hover,
+  .scroll-float:hover {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Swiper width fix */
+
+.swiper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.swiper-wrapper {
+  max-width: 100%;
+}
+
+.swiper-slide {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+/* Apple-style room page transition */
+
+.room-page-transition {
+  transition:
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.34s ease;
+  will-change: transform, filter, opacity;
+}
+
+.room-slide-left {
+  transform: translate3d(-90px, 0, 0) scale(0.982);
+  filter: blur(7px);
+  opacity: 0.35;
+}
+
+.room-slide-right {
+  transform: translate3d(90px, 0, 0) scale(0.982);
+  filter: blur(7px);
+  opacity: 0.35;
+}
+
+/* Fixed room navigation buttons */
+
+.room-nav-button {
+  transform: translateY(-50%);
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.room-nav-button:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.room-nav-button:active {
+  transform: translateY(-50%) scale(0.88);
+}
+
+/* Mobile room page transition */
+
+@media (max-width: 640px) {
+  .room-slide-left {
+    transform: translate3d(-55px, 0, 0) scale(0.985);
+    filter: blur(5px);
+    opacity: 0.45;
+  }
+
+  .room-slide-right {
+    transform: translate3d(55px, 0, 0) scale(0.985);
+    filter: blur(5px);
+    opacity: 0.45;
+  }
+
+  .room-page-transition {
+    transition:
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.28s ease;
+  }
+}
