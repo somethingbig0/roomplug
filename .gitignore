@@ -4,3 +4,4 @@ client/node_modules
 api/uploads
 client/dist
 .DS_Store
+client/my-project
