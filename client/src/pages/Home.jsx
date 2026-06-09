@@ -75,19 +75,37 @@ export default function Home() {
     };
   }, [offerListings, rentListings, saleListings]);
 
+  const howItWorks = [
+    {
+      number: '1',
+      title: 'We inspect and upload',
+      text: 'Our team checks rooms, takes clear photos, and records short video tours before listings go live.',
+    },
+    {
+      number: '2',
+      title: 'You browse safely',
+      text: 'Compare rent, location, distance, transport, amenities and rules before contacting anyone.',
+    },
+    {
+      number: '3',
+      title: 'We help you connect',
+      text: 'Choose a room, then RoomPlug helps confirm availability and connect you to the landlord.',
+    },
+  ];
+
   return (
     <div className='min-h-screen bg-gradient-to-b from-sky-50 via-white to-sky-50'>
       {/* Hero Section */}
-      <section className='w-full max-w-[1500px] mx-auto px-6 lg:px-12 pt-24 pb-20'>
-        <div className='grid lg:grid-cols-2 gap-16 items-center'>
-          <div className='scroll-float flex flex-col gap-7'>
-            <div className='w-fit bg-white border border-sky-100 rounded-full px-5 py-2 shadow-sm'>
-              <p className='text-sky-500 text-sm font-semibold'>
+      <section className='w-full max-w-[1500px] mx-auto px-5 sm:px-6 lg:px-12 pt-16 sm:pt-24 pb-12 sm:pb-20'>
+        <div className='grid lg:grid-cols-2 gap-12 lg:gap-16 items-center'>
+          <div className='scroll-float flex flex-col gap-5 sm:gap-7'>
+            <div className='w-fit bg-white border border-sky-100 rounded-full px-4 sm:px-5 py-2 shadow-sm'>
+              <p className='text-sky-500 text-xs sm:text-sm font-semibold'>
                 Verified student accommodation near campus
               </p>
             </div>
 
-            <h1 className='font-bold tracking-[-0.06em] text-4xl sm:text-5xl lg:text-7xl leading-[0.95] text-sky-950'>
+            <h1 className='font-bold tracking-[-0.055em] text-4xl sm:text-5xl lg:text-7xl leading-[0.95] text-sky-950'>
               Find your next{' '}
               <span className='bg-gradient-to-r from-sky-400 to-cyan-300 text-transparent bg-clip-text'>
                 perfect room
@@ -96,23 +114,23 @@ export default function Home() {
               with RoomPlug
             </h1>
 
-            <p className='text-sky-700/70 text-base sm:text-lg max-w-2xl leading-8'>
+            <p className='text-sky-700/70 text-sm sm:text-lg max-w-2xl leading-7 sm:leading-8'>
               Browse clean, verified student rooms around UZ and nearby areas.
               We inspect rooms, collect photos and video tours ourselves, then
               help you secure access through a simple connection process.
             </p>
 
-            <div className='flex flex-col sm:flex-row gap-4 mt-2'>
+            <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 mt-2'>
               <Link
                 to='/search?type=rent'
-                className='bg-sky-400 hover:bg-sky-500 text-white px-8 py-4 rounded-full font-semibold text-center shadow-lg shadow-sky-200'
+                className='bg-sky-400 hover:bg-sky-500 text-white px-7 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-center shadow-lg shadow-sky-200'
               >
                 Browse rooms
               </Link>
 
               <Link
                 to='/about'
-                className='bg-white hover:bg-sky-50 text-sky-600 border border-sky-100 px-8 py-4 rounded-full font-semibold text-center shadow-sm'
+                className='bg-white hover:bg-sky-50 text-sky-600 border border-sky-100 px-7 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-center shadow-sm'
               >
                 How RoomPlug works
               </Link>
@@ -163,72 +181,54 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section className='w-full max-w-[1500px] mx-auto px-6 lg:px-12 py-12'>
-        <div className='bg-white border border-sky-100 rounded-[36px] p-8 lg:p-10 shadow-sm'>
-          <div className='scroll-float mb-8 text-center'>
-            <h2 className='text-3xl font-bold text-sky-950'>
+      <section className='w-full max-w-[1500px] mx-auto px-5 sm:px-6 lg:px-12 py-8 sm:py-12'>
+        <div className='bg-white/85 border border-sky-100 rounded-[28px] sm:rounded-[36px] p-5 sm:p-8 lg:p-10 shadow-sm'>
+          <div className='scroll-float mb-6 sm:mb-8 text-center'>
+            <p className='text-xs font-semibold uppercase tracking-[0.25em] text-sky-400'>
+              Simple process
+            </p>
+
+            <h2 className='text-2xl sm:text-3xl font-bold text-sky-950 mt-2'>
               How RoomPlug works
             </h2>
-            <p className='text-sky-700/70 mt-2 max-w-3xl mx-auto'>
-              We make student accommodation easier, safer and less stressful.
+
+            <p className='text-sky-700/60 mt-2 text-sm sm:text-base max-w-2xl mx-auto leading-6 sm:leading-7'>
+              Verified rooms, clear previews, and a safer way to connect.
             </p>
           </div>
 
-          <div className='grid md:grid-cols-3 gap-5'>
-            <div className='scroll-float bg-sky-50 rounded-3xl p-6 border border-sky-100 shadow-sm'>
-              <div className='h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-sky-500 font-bold shadow-sm'>
-                1
-              </div>
-              <h3 className='text-sky-950 font-bold text-xl mt-5'>
-                We inspect and upload
-              </h3>
-              <p className='text-sky-700/70 mt-3 leading-7'>
-                Our team visits available rooms, checks the place, takes clear
-                photos and records a short video tour so students can preview
-                the room before making a move.
-              </p>
-            </div>
+          <div className='grid md:grid-cols-3 gap-4 sm:gap-5'>
+            {howItWorks.map((item) => (
+              <div
+                key={item.number}
+                className='scroll-float bg-sky-50/70 rounded-[26px] sm:rounded-3xl p-5 sm:p-6 border border-sky-100 shadow-sm'
+              >
+                <div className='h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-white flex items-center justify-center text-sky-500 font-bold text-sm sm:text-base shadow-sm'>
+                  {item.number}
+                </div>
 
-            <div className='scroll-float bg-sky-50 rounded-3xl p-6 border border-sky-100 shadow-sm'>
-              <div className='h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-sky-500 font-bold shadow-sm'>
-                2
-              </div>
-              <h3 className='text-sky-950 font-bold text-xl mt-5'>
-                You browse safely
-              </h3>
-              <p className='text-sky-700/70 mt-3 leading-7'>
-                Students compare rent, deposit, room size, location area,
-                distance to campus, transport options, amenities and house
-                rules without needing to call random landlords first.
-              </p>
-            </div>
+                <h3 className='text-sky-950 font-bold text-lg sm:text-xl mt-4 sm:mt-5 leading-snug'>
+                  {item.title}
+                </h3>
 
-            <div className='scroll-float bg-sky-50 rounded-3xl p-6 border border-sky-100 shadow-sm'>
-              <div className='h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-sky-500 font-bold shadow-sm'>
-                3
+                <p className='text-sky-700/65 text-sm sm:text-base mt-2.5 sm:mt-3 leading-6 sm:leading-7'>
+                  {item.text}
+                </p>
               </div>
-              <h3 className='text-sky-950 font-bold text-xl mt-5'>
-                We help you connect
-              </h3>
-              <p className='text-sky-700/70 mt-3 leading-7'>
-                Once you choose a room, RoomPlug helps confirm availability and
-                connects you to the landlord after the access process, so you
-                can secure the room with less stress.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Featured slider */}
       {offerListings && offerListings.length > 0 && (
-        <section className='w-full max-w-[1500px] mx-auto px-6 lg:px-12 py-12'>
+        <section className='w-full max-w-[1500px] mx-auto px-5 sm:px-6 lg:px-12 py-10 sm:py-12'>
           <div className='scroll-float mb-5 flex items-end justify-between gap-4'>
             <div>
-              <h2 className='text-3xl font-bold text-sky-950'>
+              <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
                 Featured rooms
               </h2>
-              <p className='text-sky-700/70 mt-1'>
+              <p className='text-sky-700/70 mt-1 text-sm sm:text-base'>
                 Recently highlighted rooms from our verified listings.
               </p>
             </div>
@@ -241,7 +241,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className='scroll-float rounded-[36px] overflow-hidden border border-sky-100 shadow-sm'>
+          <div className='scroll-float rounded-[28px] sm:rounded-[36px] overflow-hidden border border-sky-100 shadow-sm'>
             <Swiper navigation>
               {offerListings.map((listing) => (
                 <SwiperSlide key={listing._id}>
@@ -250,7 +250,7 @@ export default function Home() {
                       background: `url(${listing.imageUrls[0]}) center no-repeat`,
                       backgroundSize: 'cover',
                     }}
-                    className='h-[420px] lg:h-[520px]'
+                    className='h-[300px] sm:h-[420px] lg:h-[520px]'
                   ></div>
                 </SwiperSlide>
               ))}
@@ -260,24 +260,24 @@ export default function Home() {
       )}
 
       {/* Listing sections */}
-      <section className='w-full max-w-[1500px] mx-auto px-6 lg:px-12 py-16 flex flex-col gap-14'>
+      <section className='w-full max-w-[1500px] mx-auto px-5 sm:px-6 lg:px-12 py-12 sm:py-16 flex flex-col gap-12 sm:gap-14'>
         {rentListings && rentListings.length > 0 && (
           <div>
             <div className='scroll-float mb-6 flex items-end justify-between gap-4'>
               <div>
-                <h2 className='text-3xl font-bold text-sky-950'>
+                <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
                   Recently added rooms
                 </h2>
-                <p className='text-sky-700/70 mt-1'>
+                <p className='text-sky-700/70 mt-1 text-sm sm:text-base'>
                   Fresh student accommodation options added by RoomPlug.
                 </p>
               </div>
 
               <Link
-                className='text-sm text-sky-500 hover:text-sky-600 font-semibold'
+                className='text-sm text-sky-500 hover:text-sky-600 font-semibold shrink-0'
                 to='/search?type=rent'
               >
-                Show more rooms
+                Show more
               </Link>
             </div>
 
@@ -293,19 +293,19 @@ export default function Home() {
           <div>
             <div className='scroll-float mb-6 flex items-end justify-between gap-4'>
               <div>
-                <h2 className='text-3xl font-bold text-sky-950'>
+                <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
                   Best available picks
                 </h2>
-                <p className='text-sky-700/70 mt-1'>
+                <p className='text-sky-700/70 mt-1 text-sm sm:text-base'>
                   Rooms that stand out for location, price or convenience.
                 </p>
               </div>
 
               <Link
-                className='text-sm text-sky-500 hover:text-sky-600 font-semibold'
+                className='text-sm text-sky-500 hover:text-sky-600 font-semibold shrink-0'
                 to='/search?offer=true'
               >
-                View all picks
+                View all
               </Link>
             </div>
 
@@ -321,16 +321,16 @@ export default function Home() {
           <div>
             <div className='scroll-float mb-6 flex items-end justify-between gap-4'>
               <div>
-                <h2 className='text-3xl font-bold text-sky-950'>
+                <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
                   Other available spaces
                 </h2>
-                <p className='text-sky-700/70 mt-1'>
+                <p className='text-sky-700/70 mt-1 text-sm sm:text-base'>
                   Extra listings currently available on RoomPlug.
                 </p>
               </div>
 
               <Link
-                className='text-sm text-sky-500 hover:text-sky-600 font-semibold'
+                className='text-sm text-sky-500 hover:text-sky-600 font-semibold shrink-0'
                 to='/search?type=sale'
               >
                 Show more
