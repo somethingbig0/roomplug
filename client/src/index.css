@@ -45,7 +45,7 @@ select {
   color: #075985;
 }
 
-/* RoomPlug live scroll animation — movement/scale/blur only */
+/* RoomPlug live scroll animation */
 
 .room-card-scroll,
 .scroll-float {
@@ -68,8 +68,6 @@ select {
 .scroll-float:hover {
   transform: translate3d(0, -6px, 0) scale(1.012);
 }
-
-/* Mobile scroll animation — faster, responsive, no hover jump */
 
 @media (max-width: 640px) {
   .room-card-scroll,
@@ -150,8 +148,6 @@ select {
   transform: translateY(-50%) scale(0.88);
 }
 
-/* Mobile room page transition */
-
 @media (max-width: 640px) {
   .room-slide-left {
     transform: translate3d(-55px, 0, 0) scale(0.985);
@@ -171,6 +167,63 @@ select {
       filter 0.28s cubic-bezier(0.22, 1, 0.36, 1),
       opacity 0.28s ease;
   }
+}
+
+/* Apple-style listing photo swiper */
+
+.room-photo-swiper .swiper-slide {
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.room-photo-swiper .swiper-pagination {
+  bottom: 16px !important;
+}
+
+.room-photo-swiper .swiper-pagination-bullet {
+  width: 7px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.75);
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.room-photo-swiper .swiper-pagination-bullet-active {
+  width: 24px;
+  border-radius: 999px;
+  background: #38bdf8;
+}
+
+.room-photo-swiper img {
+  transform: scale(1.01);
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.room-photo-swiper .swiper-slide-active img {
+  transform: scale(1);
+  filter: saturate(1.04) contrast(1.02);
+}
+
+.room-photo-swiper .swiper-slide-prev img,
+.room-photo-swiper .swiper-slide-next img {
+  transform: scale(0.98);
+  filter: blur(1.5px) saturate(0.9);
+}
+
+/* Logo switching */
+
+.roomplug-logo-dark {
+  display: none;
+}
+
+.roomplug-dark .roomplug-logo-light {
+  display: none !important;
+}
+
+.roomplug-dark .roomplug-logo-dark {
+  display: block !important;
 }
 
 /* =========================
@@ -197,6 +250,7 @@ body.roomplug-dark {
 /* White surfaces */
 .roomplug-dark .bg-white,
 .roomplug-dark .bg-white\/70,
+.roomplug-dark .bg-white\/75,
 .roomplug-dark .bg-white\/80,
 .roomplug-dark .bg-white\/85,
 .roomplug-dark .bg-white\/90,
@@ -229,9 +283,12 @@ body.roomplug-dark {
 }
 
 /* Borders */
+.roomplug-dark .border-sky-50,
 .roomplug-dark .border-sky-100,
 .roomplug-dark .border-blue-100,
-.roomplug-dark .border-slate-200 {
+.roomplug-dark .border-slate-200,
+.roomplug-dark .border-white\/60,
+.roomplug-dark .border-white\/70 {
   border-color: rgba(125, 220, 255, 0.24) !important;
 }
 
@@ -239,7 +296,8 @@ body.roomplug-dark {
 .roomplug-dark .text-slate-900,
 .roomplug-dark .text-slate-800,
 .roomplug-dark .text-slate-700,
-.roomplug-dark .text-sky-950 {
+.roomplug-dark .text-sky-950,
+.roomplug-dark .text-sky-900 {
   color: #f0fbff !important;
 }
 
@@ -248,10 +306,18 @@ body.roomplug-dark {
 .roomplug-dark .text-slate-500,
 .roomplug-dark .text-slate-400,
 .roomplug-dark .text-sky-700,
+.roomplug-dark .text-sky-700\/80,
 .roomplug-dark .text-sky-700\/70,
 .roomplug-dark .text-sky-700\/65,
-.roomplug-dark .text-sky-700\/60 {
+.roomplug-dark .text-sky-700\/60,
+.roomplug-dark .text-sky-700\/50,
+.roomplug-dark .text-sky-800\/80 {
   color: rgba(224, 247, 255, 0.88) !important;
+}
+
+/* Faded unavailable text */
+.roomplug-dark .text-sky-700\/40 {
+  color: rgba(224, 247, 255, 0.5) !important;
 }
 
 /* Brand blue text — brighter on dark mode */
@@ -289,6 +355,10 @@ body.roomplug-dark {
   background-color: #0ea5e9 !important;
 }
 
+.roomplug-dark .bg-cyan-400 {
+  background-color: #06b6d4 !important;
+}
+
 .roomplug-dark .hover\:bg-sky-500:hover {
   background-color: #0284c7 !important;
 }
@@ -302,6 +372,7 @@ body.roomplug-dark {
 .roomplug-dark .shadow-sky-100\/50,
 .roomplug-dark .shadow-sky-100\/60,
 .roomplug-dark .shadow-sky-200,
+.roomplug-dark .shadow-sky-200\/40,
 .roomplug-dark .shadow-sky-200\/50 {
   box-shadow: 0 20px 55px rgba(14, 165, 233, 0.08) !important;
 }
@@ -329,14 +400,30 @@ body.roomplug-dark {
 .roomplug-dark button[aria-label='Toggle dark mode'] span:first-child {
   background-color: rgba(125, 220, 255, 0.16) !important;
 }
-.roomplug-logo-dark {
-  display: none;
+
+/* Dark mode support for listing arrows/photo controls */
+
+.roomplug-dark .room-photo-prev,
+.roomplug-dark .room-photo-next,
+.roomplug-dark .room-nav-button {
+  background-color: rgba(8, 31, 48, 0.78) !important;
+  border-color: rgba(125, 220, 255, 0.25) !important;
+  color: #9eeaff !important;
+  box-shadow: 0 18px 45px rgba(14, 165, 233, 0.18) !important;
 }
 
-.roomplug-dark .roomplug-logo-light {
-  display: none !important;
+.roomplug-dark .room-photo-prev:hover,
+.roomplug-dark .room-photo-next:hover,
+.roomplug-dark .room-nav-button:hover {
+  background-color: rgba(10, 42, 66, 0.95) !important;
 }
 
-.roomplug-dark .roomplug-logo-dark {
-  display: block !important;
+/* Dark mode swiper dots */
+
+.roomplug-dark .room-photo-swiper .swiper-pagination-bullet {
+  background: rgba(224, 247, 255, 0.6);
+}
+
+.roomplug-dark .room-photo-swiper .swiper-pagination-bullet-active {
+  background: #9eeaff;
 }

@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { useSelector } from 'react-redux';
-import { Navigation } from 'swiper/modules';
+import { Navigation, Pagination, EffectCreative, Keyboard } from 'swiper/modules';
 import 'swiper/css/bundle';
 import {
   FaBath,
@@ -35,7 +35,7 @@ import {
 import Contact from '../components/Contact';
 
 export default function Listing() {
-  SwiperCore.use([Navigation]);
+  SwiperCore.use([Navigation, Pagination, EffectCreative, Keyboard]);
 
   const [listing, setListing] = useState(null);
   const [allListings, setAllListings] = useState([]);
@@ -44,6 +44,7 @@ export default function Listing() {
   const [copied, setCopied] = useState(false);
   const [contact, setContact] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState('');
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ export default function Listing() {
         }
 
         setListing(data);
+        setActivePhotoIndex(0);
         setLoading(false);
         setError(false);
 
@@ -189,15 +191,14 @@ export default function Listing() {
 
       {listing && !loading && !error && (
         <>
-          {/* Fixed buttons are OUTSIDE the animated wrapper so they stay centered on screen */}
           {previousListing && (
             <button
               type='button'
               onClick={() => handleRoomNavigate(previousListing._id, 'prev')}
-              className='room-nav-button fixed left-3 sm:left-6 top-[50dvh] -translate-y-1/2 z-50 bg-white/90 backdrop-blur-xl border border-sky-100 shadow-xl shadow-sky-100 text-sky-500 h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center hover:bg-sky-50'
+              className='room-nav-button fixed left-3 sm:left-6 top-[50dvh] -translate-y-1/2 z-50 h-12 w-12 sm:h-16 sm:w-16 rounded-full flex items-center justify-center bg-white/75 backdrop-blur-2xl border border-white/60 shadow-2xl shadow-sky-200/40 text-sky-500 hover:bg-white hover:text-sky-600 group'
               title='Previous room'
             >
-              <FaChevronLeft />
+              <FaChevronLeft className='text-lg sm:text-xl transition-transform duration-300 group-hover:-translate-x-1' />
             </button>
           )}
 
@@ -205,15 +206,15 @@ export default function Listing() {
             <button
               type='button'
               onClick={() => handleRoomNavigate(nextListing._id, 'next')}
-              className='room-nav-button fixed right-3 sm:right-6 top-[50dvh] -translate-y-1/2 z-50 bg-white/90 backdrop-blur-xl border border-sky-100 shadow-xl shadow-sky-100 text-sky-500 h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center hover:bg-sky-50'
+              className='room-nav-button fixed right-3 sm:right-6 top-[50dvh] -translate-y-1/2 z-50 h-12 w-12 sm:h-16 sm:w-16 rounded-full flex items-center justify-center bg-white/75 backdrop-blur-2xl border border-white/60 shadow-2xl shadow-sky-200/40 text-sky-500 hover:bg-white hover:text-sky-600 group'
               title='Next room'
             >
-              <FaChevronRight />
+              <FaChevronRight className='text-lg sm:text-xl transition-transform duration-300 group-hover:translate-x-1' />
             </button>
           )}
 
           <button
-            className='fixed top-[13%] right-[3%] z-40 border border-sky-100 rounded-full w-12 h-12 flex justify-center items-center bg-white cursor-pointer shadow-sm hover:scale-110'
+            className='fixed top-[13%] right-[3%] z-40 border border-sky-100 rounded-full w-12 h-12 flex justify-center items-center bg-white/90 backdrop-blur-xl cursor-pointer shadow-xl shadow-sky-100 hover:scale-110'
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
               setCopied(true);
@@ -226,7 +227,7 @@ export default function Listing() {
           </button>
 
           {copied && (
-            <p className='fixed top-[23%] right-[5%] z-40 rounded-md bg-white border border-sky-100 p-2 text-sky-600 shadow-sm'>
+            <p className='fixed top-[23%] right-[5%] z-40 rounded-2xl bg-white/90 backdrop-blur-xl border border-sky-100 p-3 text-sky-600 shadow-xl shadow-sky-100'>
               Link copied!
             </p>
           )}
@@ -234,7 +235,7 @@ export default function Listing() {
           {isAdmin && (
             <Link
               to={`/update-listing/${listing._id}`}
-              className='fixed bottom-6 right-6 z-40 bg-white border border-sky-100 shadow-xl shadow-sky-100 text-sky-500 h-14 w-14 rounded-full flex items-center justify-center hover:scale-110 hover:bg-sky-50'
+              className='fixed bottom-6 right-6 z-40 bg-white/90 backdrop-blur-xl border border-sky-100 shadow-xl shadow-sky-100 text-sky-500 h-14 w-14 rounded-full flex items-center justify-center hover:scale-110 hover:bg-sky-50'
               title='Edit room'
             >
               <FaEdit />
@@ -360,38 +361,95 @@ export default function Listing() {
 
             {/* Pictures SECOND */}
             <section className='scroll-float max-w-6xl mx-auto mb-8'>
-              <div className='flex flex-col items-center text-center gap-3 mb-5 px-1'>
-                <div className='h-12 w-12 bg-white border border-sky-100 rounded-2xl flex items-center justify-center text-sky-500 shadow-sm'>
-                  <FaImage />
+              <div className='flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5 px-1'>
+                <div className='flex items-center gap-4'>
+                  <div className='h-12 w-12 bg-white border border-sky-100 rounded-2xl flex items-center justify-center text-sky-500 shadow-sm'>
+                    <FaImage />
+                  </div>
+
+                  <div>
+                    <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
+                      Pictures
+                    </h2>
+                    <p className='text-sky-700/60 text-sm mt-1'>
+                      Swipe through the room photos.
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
-                    Pictures
-                  </h2>
-                  <p className='text-sky-700/60 text-sm mt-1'>
-                    Swipe through the room photos.
-                  </p>
+                <div className='w-fit bg-white/80 backdrop-blur-xl border border-sky-100 rounded-full px-4 py-2 text-sm font-semibold text-sky-600 shadow-sm'>
+                  {activePhotoIndex + 1} / {listing.imageUrls.length}
                 </div>
               </div>
 
-              <div className='w-full min-w-0 bg-white border border-sky-100 rounded-[32px] p-3 sm:p-4 shadow-sm overflow-hidden'>
+              <div className='relative w-full min-w-0 bg-white/85 backdrop-blur-xl border border-sky-100 rounded-[34px] p-2 sm:p-4 shadow-xl shadow-sky-100/60 overflow-hidden'>
                 <Swiper
-                  navigation
-                  className='w-full max-w-full overflow-hidden rounded-[26px]'
+                  modules={[Navigation, Pagination, EffectCreative, Keyboard]}
+                  effect='creative'
+                  speed={650}
+                  grabCursor={true}
+                  keyboard={{
+                    enabled: true,
+                  }}
+                  pagination={{
+                    clickable: true,
+                  }}
+                  navigation={{
+                    nextEl: '.room-photo-next',
+                    prevEl: '.room-photo-prev',
+                  }}
+                  creativeEffect={{
+                    prev: {
+                      shadow: false,
+                      translate: ['-18%', 0, -220],
+                      scale: 0.92,
+                      opacity: 0.55,
+                    },
+                    next: {
+                      shadow: false,
+                      translate: ['18%', 0, -220],
+                      scale: 0.92,
+                      opacity: 0.55,
+                    },
+                  }}
+                  onSlideChange={(swiper) => setActivePhotoIndex(swiper.realIndex)}
+                  className='room-photo-swiper w-full max-w-full overflow-hidden rounded-[30px]'
                 >
-                  {listing.imageUrls.map((url) => (
+                  {listing.imageUrls.map((url, index) => (
                     <SwiperSlide key={url} className='w-full'>
-                      <div className='w-full bg-sky-50 rounded-[26px] overflow-hidden flex items-center justify-center'>
+                      <div className='relative w-full bg-sky-50 rounded-[30px] overflow-hidden flex items-center justify-center'>
                         <img
                           src={url}
-                          alt='room'
-                          className='w-full h-[280px] sm:h-[380px] lg:h-[540px] object-cover rounded-[26px]'
+                          alt={`Room photo ${index + 1}`}
+                          className='w-full h-[300px] sm:h-[420px] lg:h-[580px] object-cover rounded-[30px] select-none'
+                          draggable='false'
                         />
+
+                        <div className='absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-sky-950/35 to-transparent pointer-events-none'></div>
                       </div>
                     </SwiperSlide>
                   ))}
                 </Swiper>
+
+                {listing.imageUrls.length > 1 && (
+                  <>
+                    <button
+                      type='button'
+                      className='room-photo-prev absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 h-11 w-11 sm:h-14 sm:w-14 rounded-full bg-white/75 backdrop-blur-2xl border border-white/70 shadow-xl shadow-sky-900/10 text-sky-500 flex items-center justify-center hover:bg-white hover:scale-105 active:scale-95 transition group'
+                      aria-label='Previous photo'
+                    >
+                      <FaChevronLeft className='transition-transform duration-300 group-hover:-translate-x-1' />
+                    </button>
+
+                    <button
+                      type='button'
+                      className='room-photo-next absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 h-11 w-11 sm:h-14 sm:w-14 rounded-full bg-white/75 backdrop-blur-2xl border border-white/70 shadow-xl shadow-sky-900/10 text-sky-500 flex items-center justify-center hover:bg-white hover:scale-105 active:scale-95 transition group'
+                      aria-label='Next photo'
+                    >
+                      <FaChevronRight className='transition-transform duration-300 group-hover:translate-x-1' />
+                    </button>
+                  </>
+                )}
               </div>
             </section>
 
