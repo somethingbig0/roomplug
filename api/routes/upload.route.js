@@ -69,6 +69,8 @@ router.post('/single', upload.single('file'), (req, res) => {
 });
 
 export default router; */
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import multer from 'multer';
 import ImageKit from 'imagekit';

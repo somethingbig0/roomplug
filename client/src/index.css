@@ -172,3 +172,160 @@ select {
       opacity 0.28s ease;
   }
 }
+
+/* =========================
+   RoomPlug Premium Dark Mode
+   ========================= */
+
+html.roomplug-dark,
+body.roomplug-dark {
+  background: #061826 !important;
+  color: #f0fbff !important;
+}
+
+/* Main background gradients */
+.roomplug-dark .bg-gradient-to-b,
+.roomplug-dark .bg-gradient-to-br {
+  background: linear-gradient(
+    180deg,
+    #061826 0%,
+    #082033 45%,
+    #061826 100%
+  ) !important;
+}
+
+/* White surfaces */
+.roomplug-dark .bg-white,
+.roomplug-dark .bg-white\/70,
+.roomplug-dark .bg-white\/80,
+.roomplug-dark .bg-white\/85,
+.roomplug-dark .bg-white\/90,
+.roomplug-dark .bg-white\/95 {
+  background-color: rgba(8, 31, 48, 0.94) !important;
+}
+
+/* Light blue surfaces */
+.roomplug-dark .bg-sky-50,
+.roomplug-dark .bg-sky-50\/60,
+.roomplug-dark .bg-sky-50\/70,
+.roomplug-dark .bg-blue-50 {
+  background-color: rgba(10, 42, 66, 0.92) !important;
+}
+
+/* Small light-blue icon bubbles/cards */
+.roomplug-dark .bg-sky-100,
+.roomplug-dark .bg-blue-100 {
+  background-color: rgba(125, 220, 255, 0.14) !important;
+}
+
+/* Gradient pieces */
+.roomplug-dark .from-sky-50,
+.roomplug-dark .via-white,
+.roomplug-dark .to-sky-50,
+.roomplug-dark .to-blue-50 {
+  --tw-gradient-from: #061826 !important;
+  --tw-gradient-via: #082033 !important;
+  --tw-gradient-to: #061826 !important;
+}
+
+/* Borders */
+.roomplug-dark .border-sky-100,
+.roomplug-dark .border-blue-100,
+.roomplug-dark .border-slate-200 {
+  border-color: rgba(125, 220, 255, 0.24) !important;
+}
+
+/* Headings and strong text */
+.roomplug-dark .text-slate-900,
+.roomplug-dark .text-slate-800,
+.roomplug-dark .text-slate-700,
+.roomplug-dark .text-sky-950 {
+  color: #f0fbff !important;
+}
+
+/* Normal readable text */
+.roomplug-dark .text-slate-600,
+.roomplug-dark .text-slate-500,
+.roomplug-dark .text-slate-400,
+.roomplug-dark .text-sky-700,
+.roomplug-dark .text-sky-700\/70,
+.roomplug-dark .text-sky-700\/65,
+.roomplug-dark .text-sky-700\/60 {
+  color: rgba(224, 247, 255, 0.88) !important;
+}
+
+/* Brand blue text — brighter on dark mode */
+.roomplug-dark .text-sky-300,
+.roomplug-dark .text-sky-400,
+.roomplug-dark .text-sky-500,
+.roomplug-dark .text-sky-600,
+.roomplug-dark .text-blue-500,
+.roomplug-dark .text-blue-600,
+.roomplug-dark .text-blue-700 {
+  color: #9eeaff !important;
+}
+
+/* Very soft labels */
+.roomplug-dark .text-slate-300 {
+  color: rgba(224, 247, 255, 0.78) !important;
+}
+
+/* Inputs */
+.roomplug-dark input,
+.roomplug-dark select,
+.roomplug-dark textarea {
+  background-color: rgba(10, 38, 58, 0.96) !important;
+  border-color: rgba(125, 220, 255, 0.28) !important;
+  color: #f0fbff !important;
+}
+
+.roomplug-dark input::placeholder,
+.roomplug-dark textarea::placeholder {
+  color: rgba(224, 247, 255, 0.62) !important;
+}
+
+/* Buttons */
+.roomplug-dark .bg-sky-400 {
+  background-color: #0ea5e9 !important;
+}
+
+.roomplug-dark .hover\:bg-sky-500:hover {
+  background-color: #0284c7 !important;
+}
+
+.roomplug-dark .bg-slate-700 {
+  background-color: #0b2a42 !important;
+}
+
+/* Shadows */
+.roomplug-dark .shadow-sky-100,
+.roomplug-dark .shadow-sky-100\/50,
+.roomplug-dark .shadow-sky-100\/60,
+.roomplug-dark .shadow-sky-200,
+.roomplug-dark .shadow-sky-200\/50 {
+  box-shadow: 0 20px 55px rgba(14, 165, 233, 0.08) !important;
+}
+
+/* Header and footer */
+.roomplug-dark header,
+.roomplug-dark footer {
+  background-color: rgba(8, 31, 48, 0.96) !important;
+  border-color: rgba(125, 220, 255, 0.2) !important;
+}
+
+/* Links */
+.roomplug-dark a {
+  color: inherit;
+}
+
+/* Theme toggle itself */
+.roomplug-dark button[aria-label='Toggle dark mode'] {
+  background-color: rgba(8, 31, 48, 0.96) !important;
+  color: #9eeaff !important;
+  border-color: rgba(125, 220, 255, 0.38) !important;
+  box-shadow: 0 18px 45px rgba(14, 165, 233, 0.22) !important;
+}
+
+.roomplug-dark button[aria-label='Toggle dark mode'] span:first-child {
+  background-color: rgba(125, 220, 255, 0.16) !important;
+}

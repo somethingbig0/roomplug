@@ -13,6 +13,7 @@ import CreateListing from './pages/CreateListing';
 import UpdateListing from './pages/UpdateListing';
 import Listing from './pages/Listing';
 import Search from './pages/Search';
+import ThemeToggle from './components/ThemeToggle';
 
 function AdminRoute() {
   const { currentUser } = useSelector((state) => state.user);
@@ -33,6 +34,8 @@ export default function App() {
     <BrowserRouter>
       <div className='min-h-screen flex flex-col'>
         <Header />
+
+        <ThemeToggle />
 
         <div className='flex-1'>
           <Routes>
