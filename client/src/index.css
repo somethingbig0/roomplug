@@ -329,3 +329,14 @@ body.roomplug-dark {
 .roomplug-dark button[aria-label='Toggle dark mode'] span:first-child {
   background-color: rgba(125, 220, 255, 0.16) !important;
 }
+.roomplug-logo-dark {
+  display: none;
+}
+
+.roomplug-dark .roomplug-logo-light {
+  display: none !important;
+}
+
+.roomplug-dark .roomplug-logo-dark {
+  display: block !important;
+}
