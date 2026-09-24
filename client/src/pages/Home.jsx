@@ -6,6 +6,7 @@ import SwiperCore from 'swiper';
 import 'swiper/css/bundle';
 import ListingItem from '../components/ListingItem';
 import { FaArrowRight, FaBed, FaGraduationCap, FaHome, FaHotel } from 'react-icons/fa';
+import { usePageSEO, absoluteUrl } from '../components/SEO';
 
 export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
@@ -15,6 +16,36 @@ export default function Home() {
   const [sectionsError, setSectionsError] = useState('');
 
   SwiperCore.use([Navigation]);
+
+  usePageSEO({
+    title: 'Student Accommodation in Zimbabwe | RoomPlug',
+    description:
+      'Find student accommodation, rooms, lodges, general accommodation and BnBs in Zimbabwe. Browse verified room listings, prices, locations, photos and video tours on RoomPlug.',
+    canonicalPath: '/',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': absoluteUrl('/#organization'),
+          name: 'RoomPlug',
+          alternateName: 'Room Plug',
+          url: absoluteUrl('/'),
+          logo: absoluteUrl('/favicon.svg'),
+          description:
+            'RoomPlug helps students and renters in Zimbabwe find accommodation through detailed room listings, photos and short video tours.',
+        },
+        {
+          '@type': 'WebSite',
+          '@id': absoluteUrl('/#website'),
+          url: absoluteUrl('/'),
+          name: 'RoomPlug',
+          alternateName: 'Room Plug',
+          publisher: { '@id': absoluteUrl('/#organization') },
+        },
+      ],
+    },
+  });
 
   useEffect(() => {
     const fetchSections = async () => {
@@ -163,7 +194,7 @@ export default function Home() {
                 {rentListings && rentListings.length > 0 ? (
                   <img
                     src={rentListings[0].imageUrls[0]}
-                    alt='Room preview'
+                    alt='Student accommodation room in Zimbabwe' loading='eager' fetchPriority='high' decoding='async'
                     className='w-full h-[420px] object-cover'
                   />
                 ) : (

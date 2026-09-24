@@ -16,6 +16,8 @@ import Search from './pages/Search';
 import Section from './pages/Section';
 import AdminDashboard from './pages/AdminDashboard';
 import ThemeToggle from './components/ThemeToggle';
+import RouteSEO from './components/SEO';
+import NotFound from './pages/NotFound';
 
 function AdminRoute() {
   const { currentUser } = useSelector((state) => state.user);
@@ -39,6 +41,8 @@ export default function App() {
 
         <ThemeToggle />
 
+        <RouteSEO />
+
         <div className='flex-1'>
           <Routes>
             <Route path='/' element={<Home />} />
@@ -48,6 +52,7 @@ export default function App() {
             <Route path='/search' element={<Search />} />
             <Route path='/section/:slug' element={<Section />} />
             <Route path='/listing/:listingId' element={<Listing />} />
+            <Route path='*' element={<NotFound />} />
 
             <Route element={<PrivateRoute />}>
               <Route path='/profile' element={<Profile />} />

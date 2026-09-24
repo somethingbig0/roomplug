@@ -33,6 +33,7 @@ import {
   FaVideo,
 } from 'react-icons/fa';
 import Contact from '../components/Contact';
+import { usePageSEO, absoluteUrl } from '../components/SEO';
 
 export default function Listing() {
   SwiperCore.use([Navigation, Pagination, EffectCreative, Keyboard]);
@@ -51,6 +52,89 @@ export default function Listing() {
   const { currentUser } = useSelector((state) => state.user);
 
   const isAdmin = currentUser?.isAdmin === true;
+
+  const publicRoomDescription = listing
+    ? `${listing.name} in ${listing.address}. ${listing.description} ${listing.bedrooms || 1} bedroom${listing.bedrooms === 1 ? '' : 's'}, ${listing.bathrooms || 1} bathroom${listing.bathrooms === 1 ? '' : 's'}, from $${listing.offer ? listing.discountPrice : listing.regularPrice} per month.`
+    : 'View a RoomPlug accommodation listing with room details, price, location, amenities and photos.';
+
+  usePageSEO({
+    title: listing
+      ? `${listing.name} in ${listing.address} | RoomPlug`
+      : 'Accommodation Listing | RoomPlug',
+    description: publicRoomDescription.slice(0, 300),
+    canonicalPath: params.listingId ? `/listing/${params.listingId}` : '/',
+    image: listing?.imageUrls?.[0] || '/favicon.svg',
+    jsonLd: listing
+      ? {
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'Accommodation',
+              '@id': `${absoluteUrl(`/listing/${listing._id}`)}#accommodation`,
+              name: listing.name,
+              description: publicRoomDescription.slice(0, 500),
+              url: absoluteUrl(`/listing/${listing._id}`),
+              image: listing.imageUrls || [],
+              numberOfRooms: listing.bedrooms || undefined,
+              occupancy: listing.roomAllocation
+                ? {
+                    '@type': 'QuantitativeValue',
+                    value: listing.roomAllocation,
+                  }
+                : undefined,
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: listing.address,
+                addressCountry: 'ZW',
+              },
+              amenityFeature: [
+                ['Parking', listing.parking],
+                ['Furnished', listing.furnished],
+                ['WiFi', Boolean(listing.wifi)],
+                ['Geyser', listing.geyser],
+                ['Lounge', listing.lounge],
+                ['Fitted kitchen', listing.fittedKitchen],
+                ['Cleaning services', listing.cleaningServices],
+                ['Refrigerator', listing.refrigerator],
+                ['Microwave', listing.microwave],
+                ['Wardrobes', listing.wardrobes],
+                ['Study desk', listing.studyDesk],
+                ['Swimming pool', listing.swimmingPool],
+              ]
+                .filter(([, value]) => value)
+                .map(([name]) => ({
+                  '@type': 'LocationFeatureSpecification',
+                  name,
+                  value: true,
+                })),
+            },
+            {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: 'RoomPlug',
+                  item: absoluteUrl('/'),
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: listing.address,
+                  item: absoluteUrl(`/search?preferredLocation=${encodeURIComponent(listing.address)}`),
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: listing.name,
+                  item: absoluteUrl(`/listing/${listing._id}`),
+                },
+              ],
+            },
+          ],
+        }
+      : null,
+  });
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -439,7 +523,10 @@ export default function Listing() {
                       <div className='relative w-full bg-sky-50 rounded-[30px] overflow-hidden flex items-center justify-center'>
                         <img
                           src={url}
-                          alt={`Room photo ${index + 1}`}
+                          alt={`${listing.name} accommodation photo ${index + 1}`}
+                          loading={index === 0 ? 'eager' : 'lazy'}
+                          fetchPriority={index === 0 ? 'high' : 'auto'}
+                          decoding='async'
                           className='w-full h-[300px] sm:h-[420px] lg:h-[580px] object-cover rounded-[30px] select-none'
                           draggable='false'
                         />

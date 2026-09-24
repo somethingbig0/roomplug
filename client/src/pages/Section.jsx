@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ListingItem from '../components/ListingItem';
+import { usePageSEO, absoluteUrl } from '../components/SEO';
 
 export default function Section() {
   const { slug } = useParams();
@@ -9,6 +10,58 @@ export default function Section() {
   const [listingCount, setListingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  usePageSEO({
+    title: section
+      ? `${section.name} in Zimbabwe | RoomPlug`
+      : 'Accommodation in Zimbabwe | RoomPlug',
+    description: section
+      ? `Browse ${listingCount} ${section.name.toLowerCase()} listing${listingCount === 1 ? '' : 's'} in Zimbabwe on RoomPlug. Compare locations, room prices, photos, amenities and availability.`
+      : 'Browse accommodation listings in Zimbabwe on RoomPlug.',
+    canonicalPath: slug ? `/section/${slug}` : '/',
+    image: listings?.[0]?.imageUrls?.[0] || '/favicon.svg',
+    jsonLd: section
+      ? {
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'CollectionPage',
+              '@id': absoluteUrl(`/section/${section.slug}`),
+              url: absoluteUrl(`/section/${section.slug}`),
+              name: `${section.name} in Zimbabwe`,
+              description: section.description,
+              mainEntity: {
+                '@type': 'ItemList',
+                numberOfItems: listingCount,
+                itemListElement: listings.slice(0, 50).map((listing, index) => ({
+                  '@type': 'ListItem',
+                  position: index + 1,
+                  url: absoluteUrl(`/listing/${listing._id}`),
+                  name: listing.name,
+                })),
+              },
+            },
+            {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: 'RoomPlug',
+                  item: absoluteUrl('/'),
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: section.name,
+                  item: absoluteUrl(`/section/${section.slug}`),
+                },
+              ],
+            },
+          ],
+        }
+      : null,
+  });
 
   useEffect(() => {
     const fetchSection = async () => {
