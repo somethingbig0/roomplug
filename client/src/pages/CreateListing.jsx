@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -14,6 +14,7 @@ export default function CreateListing() {
   const [formData, setFormData] = useState({
     imageUrls: [],
     videoUrl: '',
+    section: '',
     name: '',
     description: '',
     address: '',
@@ -63,6 +64,8 @@ export default function CreateListing() {
   const [videoUploading, setVideoUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sections, setSections] = useState([]);
+  const [sectionsLoading, setSectionsLoading] = useState(true);
 
   const booleanFields = [
     'parking',
@@ -78,6 +81,26 @@ export default function CreateListing() {
     'studyDesk',
     'swimmingPool',
   ];
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        setSectionsLoading(true);
+        const res = await fetch('/api/section/get');
+        const data = await res.json();
+        if (!res.ok || data.success === false) {
+          throw new Error(data.message || 'Failed to load accommodation sections');
+        }
+        setSections(data);
+      } catch (error) {
+        setError(error.message || 'Failed to load accommodation sections');
+      } finally {
+        setSectionsLoading(false);
+      }
+    };
+
+    fetchSections();
+  }, []);
 
   if (!isAdmin) {
     return (
@@ -231,6 +254,10 @@ export default function CreateListing() {
         return setError('Only admins can create rooms');
       }
 
+      if (!formData.section) {
+        return setError('Please select an accommodation section');
+      }
+
       if (formData.imageUrls.length < 1) {
         return setError('You must upload at least one image');
       }
@@ -281,6 +308,32 @@ export default function CreateListing() {
         <div className='flex flex-col gap-5'>
           <section className='bg-white border border-sky-100 rounded-[32px] p-6 shadow-sm flex flex-col gap-4'>
             <h2 className='text-xl font-bold text-sky-950'>Basic room info</h2>
+
+            <div className='bg-sky-50 border border-sky-100 rounded-2xl p-4'>
+              <label htmlFor='section' className='block text-sm font-semibold text-sky-950'>
+                Accommodation section
+              </label>
+              <p className='text-xs text-sky-700/60 mt-1'>
+                Choose where this room should appear on RoomPlug.
+              </p>
+              <select
+                id='section'
+                required
+                disabled={sectionsLoading}
+                className='mt-3 border border-sky-100 p-3 rounded-lg w-full bg-white'
+                onChange={handleChange}
+                value={formData.section}
+              >
+                <option value=''>
+                  {sectionsLoading ? 'Loading sections...' : 'Select a section'}
+                </option>
+                {sections.map((section) => (
+                  <option key={section.slug} value={section.slug}>
+                    {section.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <input
               type='text'

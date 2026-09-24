@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 import listingRouter from './routes/listing.route.js';
+import sectionRouter from './routes/section.route.js';
 import uploadRouter from './routes/upload.route.js';
 
 dotenv.config();
@@ -49,6 +50,7 @@ app.use('/api/upload', uploadRouter);
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
+app.use('/api/section', sectionRouter);
 
 // Production frontend
 app.use(express.static(path.join(__dirname, '../client/dist')));

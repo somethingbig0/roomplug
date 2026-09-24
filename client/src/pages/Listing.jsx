@@ -310,12 +310,31 @@ export default function Listing() {
                   </p>
                 )}
 
+                {listing.sectionDetails?.name && (
+                  <p className='bg-sky-50 border border-sky-100 text-sky-600 min-w-[130px] text-center px-4 py-2 rounded-full'>
+                    {listing.sectionDetails.name}
+                  </p>
+                )}
+
                 {listing.distanceToCampus && (
                   <p className='bg-sky-50 border border-sky-100 text-sky-600 min-w-[130px] text-center px-4 py-2 rounded-full'>
                     {listing.distanceToCampus}
                   </p>
                 )}
               </div>
+
+              {listing.sectionDetails && (
+                <div className='bg-white border border-sky-100 rounded-2xl px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+                  <p className='text-sm text-sky-700/70'>
+                    <span className='font-semibold text-sky-950'>{listing.sectionDetails.name}</span> section
+                  </p>
+                  <p className='text-sm font-bold text-sky-500'>
+                    {listing.sectionDetails.bookingFee > 0
+                      ? `$${listing.sectionDetails.bookingFee} RoomPlug booking / connection fee`
+                      : 'RoomPlug booking / connection fee not set yet'}
+                  </p>
+                </div>
+              )}
 
               <p className='text-sky-800/80 leading-8'>
                 <span className='font-semibold text-sky-950'>

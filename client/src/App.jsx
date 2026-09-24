@@ -13,6 +13,8 @@ import CreateListing from './pages/CreateListing';
 import UpdateListing from './pages/UpdateListing';
 import Listing from './pages/Listing';
 import Search from './pages/Search';
+import Section from './pages/Section';
+import AdminDashboard from './pages/AdminDashboard';
 import ThemeToggle from './components/ThemeToggle';
 
 function AdminRoute() {
@@ -44,6 +46,7 @@ export default function App() {
             <Route path='/sign-up' element={<SignUp />} />
             <Route path='/about' element={<About />} />
             <Route path='/search' element={<Search />} />
+            <Route path='/section/:slug' element={<Section />} />
             <Route path='/listing/:listingId' element={<Listing />} />
 
             <Route element={<PrivateRoute />}>
@@ -51,6 +54,7 @@ export default function App() {
             </Route>
 
             <Route element={<AdminRoute />}>
+              <Route path='/admin' element={<AdminDashboard />} />
               <Route path='/create-listing' element={<CreateListing />} />
               <Route
                 path='/update-listing/:listingId'

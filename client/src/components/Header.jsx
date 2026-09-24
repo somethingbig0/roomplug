@@ -1,4 +1,4 @@
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaTachometerAlt } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -14,20 +14,21 @@ export default function Header() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('searchTerm', searchTerm);
-    const searchQuery = urlParams.toString();
+    const urlParams = new URLSearchParams(location.search);
+    if (searchTerm.trim()) {
+      urlParams.set('searchTerm', searchTerm.trim());
+    } else {
+      urlParams.delete('searchTerm');
+    }
 
-    navigate(`/search?${searchQuery}`);
+    navigate(`/search?${urlParams.toString()}`);
   };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get('searchTerm');
 
-    if (searchTermFromUrl) {
-      setSearchTerm(searchTermFromUrl);
-    }
+    setSearchTerm(searchTermFromUrl || '');
   }, [location.search]);
 
   return (
@@ -76,6 +77,15 @@ export default function Header() {
               How it works
             </li>
           </Link>
+
+          {currentUser?.isAdmin === true && (
+            <Link to='/admin'>
+              <li className='hidden sm:flex items-center gap-1 text-sky-800 hover:text-sky-500 transition'>
+                <FaTachometerAlt className='text-sky-400' />
+                Admin
+              </li>
+            </Link>
+          )}
 
           <Link to='/profile'>
             {currentUser ? (

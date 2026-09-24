@@ -5,15 +5,31 @@ import { Navigation } from 'swiper/modules';
 import SwiperCore from 'swiper';
 import 'swiper/css/bundle';
 import ListingItem from '../components/ListingItem';
+import { FaArrowRight, FaBed, FaGraduationCap, FaHome, FaHotel } from 'react-icons/fa';
 
 export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [sectionsError, setSectionsError] = useState('');
 
   SwiperCore.use([Navigation]);
 
   useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const res = await fetch('/api/section/get');
+        const data = await res.json();
+        if (!res.ok || data.success === false) {
+          throw new Error(data.message || 'Failed to load sections');
+        }
+        setSections(data);
+      } catch (error) {
+        setSectionsError(error.message || 'Failed to load sections');
+      }
+    };
+
     const fetchOfferListings = async () => {
       try {
         const res = await fetch('/api/listing/get?offer=true&limit=4');
@@ -46,6 +62,7 @@ export default function Home() {
       }
     };
 
+    fetchSections();
     fetchOfferListings();
   }, []);
 
@@ -217,6 +234,63 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Accommodation sections */}
+      <section className='w-full max-w-[1500px] mx-auto px-5 sm:px-6 lg:px-12 py-12 sm:py-16'>
+        <div className='scroll-float text-center max-w-3xl mx-auto mb-8'>
+          <p className='text-xs font-semibold uppercase tracking-[0.25em] text-sky-400'>
+            Choose your accommodation type
+          </p>
+          <h2 className='text-3xl sm:text-4xl font-bold text-sky-950 mt-2'>
+            Browse RoomPlug sections
+          </h2>
+          <p className='text-sky-700/60 mt-3 leading-7'>
+            Explore rooms by the type of accommodation you need. Each section has its own RoomPlug booking/connection fee.
+          </p>
+        </div>
+
+        {sectionsError && (
+          <p className='text-center text-red-600 text-sm mb-6'>{sectionsError}</p>
+        )}
+
+        <div className='grid sm:grid-cols-2 lg:grid-cols-4 gap-5'>
+          {sections.map((section, index) => {
+            const icons = [FaGraduationCap, FaHotel, FaHome, FaBed];
+            const Icon = icons[index % icons.length];
+
+            return (
+              <Link
+                to={`/section/${section.slug}`}
+                key={section.slug}
+                className='scroll-float group bg-white border border-sky-100 rounded-[30px] p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300'
+              >
+                <div className='flex items-start justify-between gap-4'>
+                  <div className='h-14 w-14 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-500'>
+                    <Icon className='text-2xl' />
+                  </div>
+                  <FaArrowRight className='text-sky-300 mt-2 transition-transform group-hover:translate-x-1' />
+                </div>
+
+                <h3 className='text-xl font-bold text-sky-950 mt-6'>
+                  {section.name}
+                </h3>
+                <p className='text-sky-700/60 text-sm mt-2 min-h-[48px] leading-6'>
+                  {section.description || 'Browse available accommodation in this section.'}
+                </p>
+
+                <div className='mt-5 flex items-center justify-between gap-3'>
+                  <p className='text-sm font-bold text-sky-500'>
+                    {section.listingCount} {section.listingCount === 1 ? 'listing' : 'listings'} available
+                  </p>
+                  <p className='text-xs text-sky-700/60'>
+                    {section.bookingFee > 0 ? `$${section.bookingFee} booking fee` : 'Fee not set'}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

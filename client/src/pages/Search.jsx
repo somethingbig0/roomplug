@@ -8,6 +8,9 @@ export default function Search() {
 
   const [sidebardata, setSidebardata] = useState({
     searchTerm: '',
+    section: '',
+    type: 'all',
+    offer: 'all',
     preferredLocation: 'all',
     gender: 'all',
     roomType: 'all',
@@ -35,6 +38,7 @@ export default function Search() {
   const getListingGender = (listing) => {
     return (
       listing.genderPreference ||
+      listing.genderAllowed ||
       listing.gender ||
       listing.preferredGender ||
       ''
@@ -46,6 +50,7 @@ export default function Search() {
       listing.roomType ||
       listing.roomCategory ||
       listing.room ||
+      (listing.roomAllocation ? `shared room of ${listing.roomAllocation}` : '') ||
       ''
     ).toLowerCase();
   };
@@ -53,6 +58,7 @@ export default function Search() {
   const getListingDistance = (listing) => {
     return (
       listing.distanceFromCampus ||
+      listing.distanceToCampus ||
       listing.campusDistance ||
       listing.distance ||
       ''
@@ -63,6 +69,9 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
 
     const searchTermFromUrl = urlParams.get('searchTerm');
+    const sectionFromUrl = urlParams.get('section') || '';
+    const typeFromUrl = urlParams.get('type') || 'all';
+    const offerFromUrl = urlParams.get('offer') || 'all';
     const preferredLocationFromUrl = urlParams.get('preferredLocation');
     const genderFromUrl = urlParams.get('gender');
     const roomTypeFromUrl = urlParams.get('roomType');
@@ -73,6 +82,9 @@ export default function Search() {
 
     setSidebardata({
       searchTerm: searchTermFromUrl || '',
+      section: sectionFromUrl,
+      type: typeFromUrl,
+      offer: offerFromUrl,
       preferredLocation: preferredLocationFromUrl || 'all',
       gender: genderFromUrl || 'all',
       roomType: roomTypeFromUrl || 'all',
@@ -152,6 +164,9 @@ export default function Search() {
     let count = 0;
 
     if (sidebardata.searchTerm.trim() !== '') count += 1;
+    if (sidebardata.section) count += 1;
+    if (sidebardata.type !== 'all') count += 1;
+    if (sidebardata.offer !== 'all') count += 1;
     if (sidebardata.preferredLocation !== 'all') count += 1;
     if (sidebardata.gender !== 'all') count += 1;
     if (sidebardata.roomType !== 'all') count += 1;
@@ -189,7 +204,16 @@ export default function Search() {
 
     const urlParams = new URLSearchParams();
 
+    if (sidebardata.section) {
+      urlParams.set('section', sidebardata.section);
+    }
     urlParams.set('searchTerm', sidebardata.searchTerm);
+    if (sidebardata.type && sidebardata.type !== 'all') {
+      urlParams.set('type', sidebardata.type);
+    }
+    if (sidebardata.offer && sidebardata.offer !== 'all') {
+      urlParams.set('offer', sidebardata.offer);
+    }
     urlParams.set('preferredLocation', sidebardata.preferredLocation);
     urlParams.set('gender', sidebardata.gender);
     urlParams.set('roomType', sidebardata.roomType);
@@ -396,6 +420,11 @@ export default function Search() {
                 <p className='text-slate-500 mt-2 text-sm sm:text-base'>
                   Browse rooms inspected and uploaded by the RoomPlug team.
                 </p>
+                {sidebardata.section && (
+                  <span className='inline-flex mt-3 bg-sky-50 border border-sky-100 text-sky-600 rounded-full px-3 py-1 text-xs font-semibold'>
+                    Section: {sidebardata.section.replaceAll('-', ' ')}
+                  </span>
+                )}
               </div>
 
               <button

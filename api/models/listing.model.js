@@ -219,6 +219,16 @@ const listingSchema = new mongoose.Schema(
       default: '',
     },
 
+    // Category/section the listing belongs to.
+    // Existing listings without this field are migrated to General Accommodation
+    // by the section controller when the section system is first loaded.
+    section: {
+      type: String,
+      required: true,
+      default: 'general-accommodation',
+      index: true,
+    },
+
     userRef: {
       type: String,
       required: true,

@@ -16,6 +16,7 @@ export default function CreateListing() {
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
+    section: 'general-accommodation',
     name: '',
     description: '',
     address: '',
@@ -32,6 +33,28 @@ export default function CreateListing() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sections, setSections] = useState([]);
+  const [sectionsLoading, setSectionsLoading] = useState(true);
+
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const res = await fetch('/api/section/get');
+        const data = await res.json();
+        if (!res.ok || data.success === false) {
+          throw new Error(data.message || 'Failed to load sections');
+        }
+        setSections(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setSectionsLoading(false);
+      }
+    };
+
+    fetchSections();
+  }, []);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -42,7 +65,7 @@ export default function CreateListing() {
         console.log(data.message);
         return;
       }
-      setFormData(data);
+      setFormData({ ...data, section: data.section || 'general-accommodation' });
     };
 
     fetchListing();
@@ -176,6 +199,15 @@ export default function CreateListing() {
       </h1>
       <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
         <div className='flex flex-col gap-4 flex-1'>
+          <div className='bg-sky-50 border border-sky-100 rounded-2xl p-4'>
+            <label htmlFor='section' className='block font-semibold text-slate-700'>Accommodation section</label>
+            <select id='section' value={formData.section || ''} onChange={handleChange} disabled={sectionsLoading} className='mt-2 border border-sky-100 rounded-lg p-3 w-full bg-white'>
+              <option value=''>{sectionsLoading ? 'Loading sections...' : 'Select a section'}</option>
+              {sections.map((section) => (
+                <option key={section.slug} value={section.slug}>{section.name}</option>
+              ))}
+            </select>
+          </div>
           <input
             type='text'
             placeholder='Name'
