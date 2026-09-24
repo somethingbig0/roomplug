@@ -239,10 +239,6 @@ export default function CreateListing() {
         return setError('You can only upload 5 photos per room');
       }
 
-      if (!formData.videoUrl) {
-        return setError('You must upload one short room tour video');
-      }
-
       if (+formData.regularPrice < +formData.discountPrice) {
         return setError('Discount price must be lower than regular price');
       }

@@ -452,8 +452,10 @@ export default function Listing() {
                 )}
               </div>
             </section>
-
-            {/* Video THIRD */}
+            
+          
+          {/* Video THIRD - only shown when a video exists */}
+          {listing.videoUrl && (
             <section className='scroll-float max-w-6xl mx-auto mb-8'>
               <div className='flex flex-col items-center text-center gap-3 mb-5 px-1'>
                 <div className='h-12 w-12 bg-white border border-sky-100 rounded-2xl flex items-center justify-center text-sky-500 shadow-sm'>
@@ -464,6 +466,7 @@ export default function Listing() {
                   <h2 className='text-2xl sm:text-3xl font-bold text-sky-950'>
                     Short video preview
                   </h2>
+
                   <p className='text-sky-700/60 text-sm mt-1'>
                     Quick room tour before you secure access.
                   </p>
@@ -471,26 +474,16 @@ export default function Listing() {
               </div>
 
               <div className='w-full min-w-0 bg-white border border-sky-100 rounded-[32px] p-3 sm:p-4 shadow-sm overflow-hidden'>
-                {listing.videoUrl ? (
-                  <video
-                    src={listing.videoUrl}
-                    controls
-                    className='w-full h-[280px] sm:h-[380px] lg:h-[540px] object-cover rounded-[26px] bg-sky-50'
-                  />
-                ) : (
-                  <div className='w-full h-[280px] sm:h-[380px] lg:h-[540px] rounded-[26px] bg-sky-50 flex items-center justify-center text-center p-8'>
-                    <div>
-                      <p className='text-sky-500 font-bold text-xl'>
-                        No video tour yet
-                      </p>
-                      <p className='text-sky-700/60 mt-2'>
-                        A short preview video will appear here when uploaded.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                <video
+                  src={listing.videoUrl}
+                  controls
+                  playsInline
+                  preload='metadata'
+                  className='w-full h-[280px] sm:h-[380px] lg:h-[540px] object-cover rounded-[26px] bg-sky-50'
+                />
               </div>
             </section>
+              )}
 
             {/* Campus distance and transport */}
             <section className='scroll-float bg-white border border-sky-100 rounded-[32px] p-5 sm:p-6 lg:p-8 shadow-sm my-8 max-w-6xl mx-auto'>
