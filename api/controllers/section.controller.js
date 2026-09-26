@@ -32,6 +32,13 @@ export const DEFAULT_SECTIONS = [
     bookingFee: 0,
     displayOrder: 4,
   },
+  {
+    name: 'Property & Stands',
+    slug: 'property-and-stands',
+    description: 'Houses, land, stands and other property opportunities to browse and list through RoomPlug.',
+    bookingFee: 0,
+    displayOrder: 5,
+  },
 ];
 
 const checkAdmin = async (userId) => {
