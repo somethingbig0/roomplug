@@ -37,6 +37,12 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// Lightweight health check for Render.
+// This endpoint stays independent of MongoDB and SEO rendering.
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // Tell search engines not to index API responses.
 app.use('/api', (req, res, next) => {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
@@ -81,17 +87,27 @@ const escapeXml = (value = '') =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 
-const absoluteUrl = (route = '/') => `${SITE_URL}${route.startsWith('/') ? route : `/${route}`}`;
+const absoluteUrl = (route = '/') =>
+  `${SITE_URL}${route.startsWith('/') ? route : `/${route}`}`;
 
 const buildDescription = (listing) => {
   const price = listing.offer ? listing.discountPrice : listing.regularPrice;
+
   const bits = [
     listing.description,
     listing.address ? `Located in ${listing.address}` : '',
-    price ? `From $${Number(price).toLocaleString('en-US')} per month` : '',
-    listing.bedrooms ? `${listing.bedrooms} bedroom${listing.bedrooms === 1 ? '' : 's'}` : '',
-    listing.bathrooms ? `${listing.bathrooms} bathroom${listing.bathrooms === 1 ? '' : 's'}` : '',
-    listing.distanceToCampus ? `${listing.distanceToCampus} from campus` : '',
+    price
+      ? `From $${Number(price).toLocaleString('en-US')} per month`
+      : '',
+    listing.bedrooms
+      ? `${listing.bedrooms} bedroom${listing.bedrooms === 1 ? '' : 's'}`
+      : '',
+    listing.bathrooms
+      ? `${listing.bathrooms} bathroom${listing.bathrooms === 1 ? '' : 's'}`
+      : '',
+    listing.distanceToCampus
+      ? `${listing.distanceToCampus} from campus`
+      : '',
   ].filter(Boolean);
 
   return bits.join('. ').replace(/\.\./g, '.').slice(0, 300);
@@ -99,6 +115,7 @@ const buildDescription = (listing) => {
 
 const buildListingJsonLd = (listing) => {
   const roomUrl = absoluteUrl(`/listing/${listing._id}`);
+
   const sectionUrl = listing.section
     ? absoluteUrl(`/section/${listing.section}`)
     : absoluteUrl('/');
@@ -161,7 +178,11 @@ const buildListingJsonLd = (listing) => {
             '@type': 'ListItem',
             position: 2,
             name: listing.address || 'Accommodation',
-            item: absoluteUrl(`/search?preferredLocation=${encodeURIComponent(listing.address || '')}`),
+            item: absoluteUrl(
+              `/search?preferredLocation=${encodeURIComponent(
+                listing.address || ''
+              )}`
+            ),
           },
           {
             '@type': 'ListItem',
@@ -186,16 +207,20 @@ const buildSectionJsonLd = (section, listings, count) => {
         '@id': sectionUrl,
         url: sectionUrl,
         name: `${section.name} in Zimbabwe`,
-        description: section.description || `Browse ${section.name.toLowerCase()} accommodation in Zimbabwe on RoomPlug.`,
+        description:
+          section.description ||
+          `Browse ${section.name.toLowerCase()} accommodation in Zimbabwe on RoomPlug.`,
         mainEntity: {
           '@type': 'ItemList',
           numberOfItems: count,
-          itemListElement: listings.slice(0, 50).map((listing, index) => ({
-            '@type': 'ListItem',
-            position: index + 1,
-            url: absoluteUrl(`/listing/${listing._id}`),
-            name: listing.name,
-          })),
+          itemListElement: listings
+            .slice(0, 50)
+            .map((listing, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: absoluteUrl(`/listing/${listing._id}`),
+              name: listing.name,
+            })),
         },
       },
       {
@@ -295,7 +320,12 @@ const seoForPath = async (pathname) => {
     '/update-listing',
   ];
 
-  if (noindexPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+  if (
+    noindexPrefixes.some(
+      (prefix) =>
+        pathname === prefix || pathname.startsWith(`${prefix}/`)
+    )
+  ) {
     return {
       ...defaultSeo,
       title: 'RoomPlug',
@@ -307,33 +337,60 @@ const seoForPath = async (pathname) => {
   }
 
   if (pathname.startsWith('/section/')) {
-    const slug = decodeURIComponent(pathname.split('/')[2] || '').trim().toLowerCase();
-    const section = await Section.findOne({ slug, active: true }).lean();
+    const slug = decodeURIComponent(
+      pathname.split('/')[2] || ''
+    )
+      .trim()
+      .toLowerCase();
+
+    const section = await Section.findOne({
+      slug,
+      active: true,
+    }).lean();
 
     if (!section) {
       return {
         ...defaultSeo,
         statusCode: 404,
         title: 'Accommodation Section Not Found | RoomPlug',
-        description: 'The RoomPlug accommodation section you requested was not found.',
+        description:
+          'The RoomPlug accommodation section you requested was not found.',
         canonical: absoluteUrl(pathname),
         robots: 'noindex,nofollow',
         jsonLd: null,
       };
     }
 
-    const filter = slug === 'general-accommodation'
-      ? { $or: [{ section: slug }, { section: { $exists: false } }, { section: '' }, { section: null }] }
-      : { section: slug };
+    const filter =
+      slug === 'general-accommodation'
+        ? {
+            $or: [
+              { section: slug },
+              { section: { $exists: false } },
+              { section: '' },
+              { section: null },
+            ],
+          }
+        : { section: slug };
+
     const count = await Listing.countDocuments(filter);
-    const listings = await Listing.find(filter).sort({ createdAt: -1 }).limit(50).lean();
-    const firstImage = listings.find((item) => item.imageUrls?.[0])?.imageUrls?.[0];
+
+    const listings = await Listing.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    const firstImage = listings.find(
+      (item) => item.imageUrls?.[0]
+    )?.imageUrls?.[0];
 
     return {
       ...defaultSeo,
       title: `${section.name} in Zimbabwe | RoomPlug`,
       description:
-        `Browse ${count} ${section.name.toLowerCase()} listing${count === 1 ? '' : 's'} in Zimbabwe on RoomPlug. Compare locations, room prices, photos, amenities and availability.`,
+        `Browse ${count} ${section.name.toLowerCase()} listing${
+          count === 1 ? '' : 's'
+        } in Zimbabwe on RoomPlug. Compare locations, room prices, photos, amenities and availability.`,
       canonical: absoluteUrl(`/section/${section.slug}`),
       image: firstImage || absoluteUrl('/favicon.svg'),
       jsonLd: buildSectionJsonLd(section, listings, count),
@@ -355,7 +412,8 @@ const seoForPath = async (pathname) => {
         ...defaultSeo,
         statusCode: 404,
         title: 'Accommodation Listing Not Found | RoomPlug',
-        description: 'The RoomPlug accommodation listing you requested was not found.',
+        description:
+          'The RoomPlug accommodation listing you requested was not found.',
         canonical: absoluteUrl(pathname),
         robots: 'noindex,nofollow',
         jsonLd: null,
@@ -367,7 +425,9 @@ const seoForPath = async (pathname) => {
       title: `${listing.name} in ${listing.address} | RoomPlug`,
       description: buildDescription(listing),
       canonical: absoluteUrl(`/listing/${listing._id}`),
-      image: listing.imageUrls?.[0] || absoluteUrl('/favicon.svg'),
+      image:
+        listing.imageUrls?.[0] ||
+        absoluteUrl('/favicon.svg'),
       jsonLd: buildListingJsonLd(listing),
     };
   }
@@ -377,7 +437,8 @@ const seoForPath = async (pathname) => {
     ...defaultSeo,
     statusCode: 404,
     title: 'Page Not Found | RoomPlug',
-    description: 'The RoomPlug page you requested could not be found.',
+    description:
+      'The RoomPlug page you requested could not be found.',
     canonical: absoluteUrl(pathname),
     robots: 'noindex,nofollow',
     jsonLd: null,
@@ -385,56 +446,112 @@ const seoForPath = async (pathname) => {
 };
 
 const renderHtml = async (req, res) => {
-  const template = await fs.readFile(templatePath, 'utf8');
+  const template = await fs.readFile(
+    templatePath,
+    'utf8'
+  );
+
   const seo = await seoForPath(req.path);
 
   const meta = `
     <title>${escapeHtml(seo.title)}</title>
-    <meta name="description" content="${escapeHtml(seo.description)}" />
-    <meta name="robots" content="${escapeHtml(seo.robots)}" />
+    <meta name="description" content="${escapeHtml(
+      seo.description
+    )}" />
+    <meta name="robots" content="${escapeHtml(
+      seo.robots
+    )}" />
     <meta name="author" content="RoomPlug" />
-    <link rel="canonical" href="${escapeHtml(seo.canonical)}" />
-    <meta property="og:title" content="${escapeHtml(seo.title)}" />
-    <meta property="og:description" content="${escapeHtml(seo.description)}" />
-    <meta property="og:type" content="${escapeHtml(seo.type || 'website')}" />
-    <meta property="og:url" content="${escapeHtml(seo.canonical)}" />
+    <link rel="canonical" href="${escapeHtml(
+      seo.canonical
+    )}" />
+    <meta property="og:title" content="${escapeHtml(
+      seo.title
+    )}" />
+    <meta property="og:description" content="${escapeHtml(
+      seo.description
+    )}" />
+    <meta property="og:type" content="${escapeHtml(
+      seo.type || 'website'
+    )}" />
+    <meta property="og:url" content="${escapeHtml(
+      seo.canonical
+    )}" />
     <meta property="og:site_name" content="RoomPlug" />
     <meta property="og:locale" content="en_ZW" />
-    <meta property="og:image" content="${escapeHtml(seo.image || absoluteUrl('/favicon.svg'))}" />
-    <meta property="og:image:alt" content="${escapeHtml(seo.title)}" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${escapeHtml(seo.title)}" />
-    <meta name="twitter:description" content="${escapeHtml(seo.description)}" />
-    <meta name="twitter:image" content="${escapeHtml(seo.image || absoluteUrl('/favicon.svg'))}" />
+    <meta property="og:image" content="${escapeHtml(
+      seo.image || absoluteUrl('/favicon.svg')
+    )}" />
+    <meta property="og:image:alt" content="${escapeHtml(
+      seo.title
+    )}" />
+    <meta
+      name="twitter:card"
+      content="summary_large_image"
+    />
+    <meta
+      name="twitter:title"
+      content="${escapeHtml(seo.title)}"
+    />
+    <meta
+      name="twitter:description"
+      content="${escapeHtml(seo.description)}"
+    />
+    <meta
+      name="twitter:image"
+      content="${escapeHtml(
+        seo.image || absoluteUrl('/favicon.svg')
+      )}"
+    />
     <meta name="theme-color" content="#38bdf8" />
-    <script id="roomplug-structured-data" type="application/ld+json">${JSON.stringify(seo.jsonLd || {}).replace(/</g, '\\u003c')}</script>
+    <script
+      id="roomplug-structured-data"
+      type="application/ld+json"
+    >${JSON.stringify(seo.jsonLd || {}).replace(
+      /</g,
+      '\\u003c'
+    )}</script>
   `.trim();
 
-  let html = template.includes('<!-- SEO_HEAD -->'
-    ? template.replace('<!-- SEO_HEAD -->', meta)
-    : template.replace('</head>', `${meta}\n  </head>`));
+  let html = template.includes(
+    '<!-- SEO_HEAD -->'
+  )
+    ? template.replace(
+        '<!-- SEO_HEAD -->',
+        meta
+      )
+    : template.replace(
+        '</head>',
+        `${meta}\n  </head>`
+      );
 
   html = html.replace(
     /<title>RoomPlug \| Student Accommodation in Zimbabwe<\/title>\s*/i,
     ''
   );
 
-  res.status(seo.statusCode || 200).send(html);
+  res
+    .status(seo.statusCode || 200)
+    .send(html);
 };
 
 // robots.txt is intentionally generated from the same canonical-site setting as the sitemap.
 app.get('/robots.txt', (req, res) => {
-  res.type('text/plain').send([
-    'User-agent: *',
-    'Allow: /',
-    'Disallow: /api/',
-    'Disallow: /admin',
-    'Disallow: /profile',
-    'Disallow: /create-listing',
-    'Disallow: /update-listing/',
-    `Sitemap: ${SITE_URL}/sitemap.xml`,
-    '',
-  ].join('\n'));
+  res
+    .type('text/plain')
+    .send(
+      [
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /api/',
+        'Disallow: /admin',
+        'Disallow: /profile',
+        'Disallow: /create-listing',
+        'Disallow: /update-listing/',
+        `Sitemap: ${SITE_URL}/sitemap.xml`,
+        '',
+      ].join('\n')
+    );
 });
 
 app.get('/sitemap.xml', async (req, res, next) => {
@@ -442,8 +559,20 @@ app.get('/sitemap.xml', async (req, res, next) => {
     await ensureDefaultSections();
 
     const [sections, listings] = await Promise.all([
-      Section.find({ active: true }).sort({ displayOrder: 1, name: 1 }).lean(),
-      Listing.find().sort({ updatedAt: -1 }).lean(),
+      Section.find({
+        active: true,
+      })
+        .sort({
+          displayOrder: 1,
+          name: 1,
+        })
+        .lean(),
+
+      Listing.find()
+        .sort({
+          updatedAt: -1,
+        })
+        .lean(),
     ]);
 
     const urls = [
@@ -451,35 +580,73 @@ app.get('/sitemap.xml', async (req, res, next) => {
         loc: absoluteUrl('/'),
         lastmod: new Date().toISOString(),
       },
+
       {
         loc: absoluteUrl('/about'),
         lastmod: new Date().toISOString(),
       },
+
       ...sections.map((section) => ({
-        loc: absoluteUrl(`/section/${section.slug}`),
-        lastmod: section.updatedAt ? new Date(section.updatedAt).toISOString() : new Date().toISOString(),
+        loc: absoluteUrl(
+          `/section/${section.slug}`
+        ),
+        lastmod: section.updatedAt
+          ? new Date(
+              section.updatedAt
+            ).toISOString()
+          : new Date().toISOString(),
       })),
+
       ...listings.map((listing) => ({
-        loc: absoluteUrl(`/listing/${listing._id}`),
-        lastmod: listing.updatedAt ? new Date(listing.updatedAt).toISOString() : new Date(listing.createdAt || Date.now()).toISOString(),
-        image: listing.imageUrls?.[0] || '',
+        loc: absoluteUrl(
+          `/listing/${listing._id}`
+        ),
+        lastmod: listing.updatedAt
+          ? new Date(
+              listing.updatedAt
+            ).toISOString()
+          : new Date(
+              listing.createdAt ||
+                Date.now()
+            ).toISOString(),
+
+        image:
+          listing.imageUrls?.[0] || '',
       })),
     ];
 
     const xml = [
       '<?xml version="1.0" encoding="UTF-8"?>',
+
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
+
       ...urls.map((item) => {
         const imageXml = item.image
-          ? `\n    <image:image><image:loc>${escapeXml(item.image)}</image:loc></image:image>`
+          ? `\n    <image:image><image:loc>${escapeXml(
+              item.image
+            )}</image:loc></image:image>`
           : '';
-        return `  <url>\n    <loc>${escapeXml(item.loc)}</loc>\n    <lastmod>${escapeXml(item.lastmod)}</lastmod>${imageXml}\n  </url>`;
+
+        return `  <url>\n    <loc>${escapeXml(
+          item.loc
+        )}</loc>\n    <lastmod>${escapeXml(
+          item.lastmod
+        )}</lastmod>${imageXml}\n  </url>`;
       }),
+
       '</urlset>',
     ].join('\n');
 
-    res.set('Content-Type', 'application/xml; charset=utf-8');
-    res.set('Cache-Control', 'public, max-age=300');
+    res.set(
+      'Content-Type',
+      'application/xml; charset=utf-8'
+    );
+
+    res.set(
+      'Cache-Control',
+      'public, max-age=300'
+    );
+
     res.send(xml);
   } catch (error) {
     next(error);
@@ -487,10 +654,12 @@ app.get('/sitemap.xml', async (req, res, next) => {
 });
 
 // Production frontend
-app.use(express.static(distPath, {
-  index: false,
-  maxAge: '7d',
-}));
+app.use(
+  express.static(distPath, {
+    index: false,
+    maxAge: '7d',
+  })
+);
 
 // Dynamic SEO-aware SPA entrypoint
 app.get('*', async (req, res, next) => {
@@ -502,19 +671,36 @@ app.get('*', async (req, res, next) => {
 });
 
 // Error handler
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+app.use(
+  (err, req, res, next) => {
+    const statusCode =
+      err.statusCode || 500;
 
-  return res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
-});
+    const message =
+      err.message ||
+      'Internal Server Error';
 
-const PORT = process.env.PORT || 3000;
+    return res
+      .status(statusCode)
+      .json({
+        success: false,
+        statusCode,
+        message,
+      });
+  }
+);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}!`);
-});
+const PORT =
+  process.env.PORT || 3000;
+
+const HOST = '0.0.0.0';
+
+app.listen(
+  PORT,
+  HOST,
+  () => {
+    console.log(
+      `Server is running on http://${HOST}:${PORT}!`
+    );
+  }
+);
